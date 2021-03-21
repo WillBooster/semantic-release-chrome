@@ -66,21 +66,19 @@ Below is a step-by-step of how to get the values to correctly fill those variabl
    It's just a wizard to create and copy a `curl` into your clipboard:
 
    ```js
-   var clientId = 'YOUR CLIENT ID HERE'
-   var clientSecret = 'YOUR CLIENT SECRET HERE'
-   var authCode = 'YOUR AUTH CODE HERE'
+   var clientId = 'YOUR CLIENT ID HERE';
+   var clientSecret = 'YOUR CLIENT SECRET HERE';
+   var authCode = 'YOUR AUTH CODE HERE';
 
    copy(
      `curl "https://accounts.google.com/o/oauth2/token" -d "client_id=${encodeURIComponent(
-       clientId,
-     )}&client_secret=${encodeURIComponent(
-       clientSecret,
-     )}&code=${encodeURIComponent(
-       authCode,
-     )}&grant_type=authorization_code&redirect_uri=urn:ietf:wg:oauth:2.0:oob"`,
-   )
+       clientId
+     )}&client_secret=${encodeURIComponent(clientSecret)}&code=${encodeURIComponent(
+       authCode
+     )}&grant_type=authorization_code&redirect_uri=urn:ietf:wg:oauth:2.0:oob"`
+   );
 
-   console.log('The curl has been copied. Paste it into your terminal.')
+   console.log('The curl has been copied. Paste it into your terminal.');
    ```
 
 1. Paste the generated code in your terminal and run it. If your terminal doesn't natively support `curl`, try using the `git bash` terminal instead, or use [online curl](https://onlinecurl.com/). You can also [manually install curl](https://curl.haxx.se/dlwiz/), if none of options before worked.

@@ -1,13 +1,13 @@
 interface Context {
-  options?: {}
-  nextRelease: { version: string }
-  logger: Logger
+  options?: {};
+  nextRelease: { version: string };
+  logger: Logger;
 }
 
 export interface Logger {
-  log: (...args: any[]) => void
-  warn: (...args: any[]) => void
-  error: (...args: any[]) => void
+  log: (...args: any[]) => void;
+  warn: (...args: any[]) => void;
+  error: (...args: any[]) => void;
 }
 
-export default Context
+export default Context;

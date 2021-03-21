@@ -1,35 +1,37 @@
-import SemanticReleaseError from '@semantic-release/error'
-import AggregateError from 'aggregate-error'
-import cwu from 'chrome-webstore-upload'
-import { createReadStream } from 'fs-extra'
+import SemanticReleaseError from '@semantic-release/error';
+import AggregateError from 'aggregate-error';
+import cwu from 'chrome-webstore-upload';
+import { createReadStream } from 'fs-extra';
 
-import Context from './@types/context'
-import PluginConfig from './@types/pluginConfig'
+import Context from './@types/context';
+import PluginConfig from './@types/pluginConfig';
 
-const errorWhitelist = ['PUBLISHED_WITH_FRICTION_WARNING']
+const errorWhitelist = ['PUBLISHED_WITH_FRICTION_WARNING'];
 
-const publish = async (
-  { extensionId, target, asset }: PluginConfig,
-  { logger }: Context,
-) => {
+interface PublishResult {
+  name: string;
+  url: string;
+}
+
+async function publish({ extensionId, target, asset }: PluginConfig, { logger }: Context): Promise<PublishResult> {
   const {
     GOOGLE_CLIENT_ID: clientId,
     GOOGLE_CLIENT_SECRET: clientSecret,
     GOOGLE_REFRESH_TOKEN: refreshToken,
-  } = process.env
+  } = process.env;
 
   if (!extensionId) {
     throw new SemanticReleaseError(
       "Option 'extensionId' was not included in the publish config. Check the README.md for config info.",
-      'ENOEXTENSIONID',
-    )
+      'ENOEXTENSIONID'
+    );
   }
 
   if (!asset) {
     throw new SemanticReleaseError(
       "Option 'asset' was not included in the publish config. Check the README.md for config info.",
-      'ENOASSET',
-    )
+      'ENOASSET'
+    );
   }
 
   const webStore = await cwu({
@@ -37,48 +39,45 @@ const publish = async (
     clientSecret,
     extensionId,
     refreshToken,
-  })
+  });
 
-  const token = await webStore.fetchToken()
+  const token = await webStore.fetchToken();
 
-  const zipFile = createReadStream(asset)
-  const uploadRes = await webStore.uploadExisting(zipFile, token)
+  const zipFile = createReadStream(asset);
+  const uploadRes = await webStore.uploadExisting(zipFile, token);
 
   if (uploadRes.uploadState === 'FAILURE') {
-    const errors: SemanticReleaseError[] = []
+    const errors: SemanticReleaseError[] = [];
     uploadRes.itemError.forEach((err: any) => {
-      const semanticError = new SemanticReleaseError(
-        err.error_detail,
-        err.error_code,
-      )
-      errors.push(semanticError)
-    })
-    throw new AggregateError(errors)
+      const semanticError = new SemanticReleaseError(err.error_detail, err.error_code);
+      errors.push(semanticError);
+    });
+    throw new AggregateError(errors);
   }
 
-  const publishRes = await webStore.publish(target || 'default', token)
+  const publishRes = await webStore.publish(target || 'default', token);
 
   if (!publishRes.status.includes('OK')) {
-    const errors: SemanticReleaseError[] = []
+    const errors: SemanticReleaseError[] = [];
     for (let i = 0; i < publishRes.status.length; i += 1) {
-      const code = publishRes.status[i]
-      const message = publishRes.statusDetail[i]
+      const code = publishRes.status[i];
+      const message = publishRes.statusDetail[i];
       if (errorWhitelist.includes(code)) {
-        logger.warn(`${code}: ${message}`)
+        logger.warn(`${code}: ${message}`);
       } else {
-        const err = new SemanticReleaseError(message, code)
-        errors.push(err)
+        const err = new SemanticReleaseError(message, code);
+        errors.push(err);
       }
     }
     if (errors.length > 0) {
-      throw new AggregateError(errors)
+      throw new AggregateError(errors);
     }
   }
 
   return {
     name: 'Chrome Web Store',
     url: `https://chrome.google.com/webstore/detail/${extensionId}`,
-  }
+  };
 }
 
-export default publish
+export default publish;

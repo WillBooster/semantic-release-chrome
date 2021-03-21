@@ -1,3 +1,16 @@
 {
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "alwaysStrict": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "importHelpers": false,
+    "outDir": "dist"
+  },
+  "include": ["src/**/*", "__tests__/**/*", "./node_modules/@types", "./@types"],
   "extends": "./node_modules/gd-scripts/typescript.json"
 }

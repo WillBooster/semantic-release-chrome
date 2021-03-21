@@ -1,9 +1,9 @@
 interface PluginConfig {
-  manifestPath: string
-  distFolder: string
-  asset: string
-  extensionId: string
-  target: 'default' | 'trustedTesters'
+  manifestPath: string;
+  distFolder: string;
+  asset: string;
+  extensionId: string;
+  target: 'default' | 'trustedTesters';
 }
 
-export default PluginConfig
+export default PluginConfig;
